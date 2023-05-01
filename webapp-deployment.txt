@@ -1,0 +1,32 @@
+# App Service
+resource "azurerm_service_plan" "appserviceplan"{
+    name =  "asp-daya-test"
+    location = var.resource-location
+    resource_group_name = var.azure-'resource'
+    os_type = "Linux"
+    sku_name = "B1"
+}
+
+resource "azurerm_linux_web_app" "webapp" {
+    name = "app-daya-test"
+    location = var.resource-location
+    resource_group_name = var.azure-resource
+    service_plan_id = azurerm_service_plan.appserviceplan.id
+    site_config { 
+      application_stack {
+        node_version = "16-lts"
+    }
+  }
+  app_settings = {
+      PORT = var.PORT
+      NAME = var.NAME
+  }
+}
+resource "azurerm_app_service_source_control" "sourcecontrol"{
+    app_id = azurerm_linux_web_app.webapp.id
+    repo_url = "https://github.com/dayayadav2910/node-cli-azure-2.git"
+    branch = "master"
+    use_manual_integration = true
+}
+
+# End of an app service
