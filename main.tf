@@ -11,35 +11,41 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "rg-daya-test-terraform" {
-  name = var.azure-resource
+  name     = var.azure-resource
   location = var.resource-location
 }
 
 
-# Creating DNS
-resource "azurerm_virtual_network" "vn-daya-test-terraform"{
-    name  = "vn-dt-terraform"
-    resource_group_name = var.azure-resource
-    location = var.resource-location
-    address_space = ["10.0.0.0/16"]
-    tags = {
-        environment = "dev"
-    }
+# Virtual Network
+resource "azurerm_virtual_network" "vn-daya-test-terraform" {
+  name                = "vn-dt-terraform"
+  resource_group_name = var.azure-resource
+  location            = var.resource-location
+  address_space       = ["10.0.0.0/16"]
+  tags = {
+    environment = "dev"
+  }
 }
-resource "azurerm_dns_zone" "zone-daya"{
-  name = "daya.com"
-  resource_group_name =  var.azure-resource
+
+# Azure DNS Zone
+resource "azurerm_dns_zone" "zone-daya" {
+  name                = "daya.com"
+  resource_group_name = var.azure-resource
 }
+
+# Public IP
 resource "azurerm_public_ip" "pip" {
   name                = "pip-daya-test"
   resource_group_name = var.azure-resource
   location            = var.resource-location
   allocation_method   = "Static"
-  ip_version = "IPv4"
-  sku = "Standard"
-  sku_tier = "Regional"
+  ip_version          = "IPv4"
+  sku                 = "Standard"
+  sku_tier            = "Regional"
   domain_name_label   = "daya-dns"
 }
+
+# DNS record
 resource "azurerm_dns_a_record" "dns-record" {
   name                = "www"
   resource_group_name = var.azure-resource
@@ -48,35 +54,22 @@ resource "azurerm_dns_a_record" "dns-record" {
   target_resource_id  = azurerm_public_ip.pip.id
 }
 
+# Subnet 1
 resource "azurerm_subnet" "subnet-1" {
   name                 = "vnet-sub-1"
-  resource_group_name = var.azure-resource
+  resource_group_name  = var.azure-resource
   virtual_network_name = azurerm_virtual_network.vn-daya-test-terraform.name
   address_prefixes     = ["10.0.3.0/24"]
 }
-
+#Subnet 2 
 resource "azurerm_subnet" "subnet-2" {
   name                 = "vnet-sub-2"
-  resource_group_name = var.azure-resource
+  resource_group_name  = var.azure-resource
   virtual_network_name = azurerm_virtual_network.vn-daya-test-terraform.name
   address_prefixes     = ["10.0.4.0/24"]
 }
 
-resource "azurerm_network_interface" "network-interface" {
-  name                = "vm-ni-daya-test"
-  location            = var.resource-location
-  resource_group_name = var.azure-resource
-
-  ip_configuration {
-    name                          = "daya-test-config1"
-    subnet_id                     = azurerm_subnet.subnet-2.id
-    private_ip_address_allocation = "Dynamic"
-  }
-}
-
-
 # Application Gateway 
-
 resource "azurerm_application_gateway" "awf-daya-test" {
   name                = "appgatway"
   resource_group_name = var.azure-resource
@@ -132,7 +125,20 @@ resource "azurerm_application_gateway" "awf-daya-test" {
   }
 }
 
+# Network interface
+resource "azurerm_network_interface" "network-interface" {
+  name                = "vm-ni-daya-test"
+  location            = var.resource-location
+  resource_group_name = var.azure-resource
 
+  ip_configuration {
+    name                          = "daya-test-config1"
+    subnet_id                     = azurerm_subnet.subnet-2.id
+    private_ip_address_allocation = "Dynamic"
+  }
+}
+
+# Virtual Machin
 resource "azurerm_virtual_machine" "vm-daya-test" {
   name                  = "vm-daya-test"
   location              = var.resource-location
