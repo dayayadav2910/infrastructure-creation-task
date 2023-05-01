@@ -6,19 +6,19 @@ variable "azure-resource" {
 
 variable "resource-location" {
   type        = string
-  default     = "West Europe"
+  sensitive   = true
   description = "Resource location"
 }
 
 variable "PORT" {
   type        = number
-  default     = 5000
+  sensitive   = true
   description = "setting port"
 }
 
 variable "NAME" {
   type        = string
-  default     = "DAYA"
+  sensitive   = true
   description = "Setting env variable"
 }
 

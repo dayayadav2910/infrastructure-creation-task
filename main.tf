@@ -138,7 +138,7 @@ resource "azurerm_network_interface" "network-interface" {
   }
 }
 
-# Virtual Machin
+# Virtual Machine
 resource "azurerm_virtual_machine" "vm-daya-test" {
   name                  = "vm-daya-test"
   location              = var.resource-location
