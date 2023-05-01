@@ -153,9 +153,9 @@ resource "azurerm_virtual_machine" "vm-daya-test" {
     managed_disk_type = "Standard_LRS"
   }
   os_profile {
-    computer_name  = "hostname"
-    admin_username = "daya"
-    admin_password = "Daya1234!"
+    computer_name  = var.os-profile-computer-name
+    admin_username = var.os-profile-admin-username
+    admin_password = var.os-profile-admin-password
   }
   os_profile_linux_config {
     disable_password_authentication = false

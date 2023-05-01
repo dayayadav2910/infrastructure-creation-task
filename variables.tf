@@ -54,3 +54,22 @@ variable "request_routing_rule_name" {
   description = "routing rule name"
 }
 
+variable "os-profile-computer-name" {
+  type        = string
+  sensitive = true
+  description = "computerName"
+}
+
+variable "os-profile-admin-username" {
+  type        = string
+  sensitive = true
+  description = "admin username"
+}
+variable "os-profile-admin-password" {
+  type        = string
+  sensitive = true
+  description = "admin password"
+}
+
+
+
